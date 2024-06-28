@@ -1,4 +1,5 @@
 import "cypress-real-events";
+import "@4tw/cypress-drag-drop";
 
 describe("Cypress Actions", () => {
   beforeEach(() => {
@@ -78,7 +79,48 @@ describe("Cypress Actions", () => {
     cy.get("[type='checkbox']").eq(1).should("be.checked");
   });
 
-  it.only("Verify radio buuton  functionality", () => {
-    cy.get("[href='/windows']").click();
+  it("Verify elements buuton  functionality", () => {
+    cy.get("[href='/elements']").click();
+    cy.get("[type='text']").type("mindAnupam {enter}");
+    cy.get("p.title").should("have.text", "Anupam Kushwaha");
+    cy.get("p.subtitle").should("have.text", "India");
+    cy.get(".media-content > span").should(
+      "have.text",
+      "Developer. Reader. Gamer "
+    );
+  });
+
+  it("Verify multi-select  functionality", () => {
+    cy.get("[href='/selectable']").click();
+    cy.get("body").type("{ctrl}", { release: false });
+    cy.get(".ui-selectable").eq(0).click();
+    cy.get(".ui-selectable").eq(0).should("have.class", "ui-selected");
+
+    cy.get(".ui-selectable").eq(3).click();
+    cy.get(".ui-selectable").eq(3).should("have.class", "ui-selected");
+
+    cy.get(".ui-selectable").eq(6).click();
+    cy.get(".ui-selectable").eq(6).should("have.class", "ui-selected");
+
+    cy.get(".ui-selectable").eq(7).click();
+    cy.get(".ui-selectable").eq(7).should("have.class", "ui-selected");
+  });
+
+  it.only("Verify sorting  functionality", () => {
+    cy.get("[href='/sortable']").click();
+    cy.get(".cdk-drag")
+      .eq(1)
+      .as("sourceElement")
+      .should("have.text", " Pick up groceries");
+
+    cy.get(".cdk-drag")
+      .eq(3)
+      .as("targetElement")
+      .should("have.text", " Fall asleep");
+
+    cy.get("@sourceElement").drag("@targetElement");
+
+    // cy.get(".cdk-drag").eq(2).should("have.text", " Fall asleep");
+    cy.get(".cdk-drag").eq(3).should("have.text", " Pick up groceries");
   });
 });
