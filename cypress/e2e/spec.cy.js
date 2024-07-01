@@ -106,7 +106,7 @@ describe("Cypress Actions", () => {
     cy.get(".ui-selectable").eq(7).should("have.class", "ui-selected");
   });
 
-  it.only("Verify sorting  functionality", () => {
+  it("Verify sorting  functionality", () => {
     cy.get("[href='/sortable']").click();
     cy.get(".cdk-drag")
       .eq(1)
@@ -122,5 +122,121 @@ describe("Cypress Actions", () => {
 
     // cy.get(".cdk-drag").eq(2).should("have.text", " Fall asleep");
     cy.get(".cdk-drag").eq(3).should("have.text", " Pick up groceries");
+  });
+
+  it("Verify table  functionality", () => {
+    cy.get("[href='/table']").click();
+    cy.get("tr").eq(1).find("td").eq(1).invoke("text").as("Chocolate");
+    cy.get("tr").eq(2).find("td").eq(1).invoke("text").as("Apple");
+    cy.get("tr").eq(3).find("td").eq(1).invoke("text").as("Eggs");
+    cy.get("tr").eq(4).find("td").eq(1).invoke("text").as("Corn");
+
+    cy.get("@Chocolate").then((text1) => {
+      cy.get("@Apple").then((text2) => {
+        cy.get("@Eggs").then((text3) => {
+          cy.get("@Corn").then((text4) => {
+            const Value1 = parseFloat(text1);
+            const Value2 = parseFloat(text2);
+            const Value3 = parseFloat(text3);
+            const Value4 = parseFloat(text4);
+            const sum = Value1 + Value2 + Value3 + Value4;
+            cy.log(`Sum of values: ${sum}`);
+            cy.get("tfoot")
+              .eq(0)
+              .find("td")
+              .eq(1)
+              .should("have.text", parseFloat(sum));
+          });
+        });
+      });
+    });
+
+    cy.contains("td", "Raj").siblings("td").last().find("input").check();
+    cy.contains("td", "Raj")
+      .siblings("td")
+      .last()
+      .find("input")
+      .should("be.checked");
+
+    cy.get(".mat-sort.table")
+      .find("tr")
+      .first()
+      .find("td")
+      .eq(1)
+      .should("have.text", "159");
+    cy.get(".mat-sort.table")
+      .find("tr")
+      .first()
+      .find("td")
+      .eq(2)
+      .should("have.text", "6");
+    cy.contains("div", "Calories").dblclick();
+    cy.get(".mat-sort.table")
+      .find("tr")
+      .first()
+      .find("td")
+      .eq(1)
+      .should("have.text", "356");
+    cy.get(".mat-sort.table")
+      .find("tr")
+      .first()
+      .find("td")
+      .eq(2)
+      .should("have.text", "16");
+  });
+
+  it("Verify Advanced table  functionality", () => {
+    cy.get("[href='/advancedtable']").click();
+    cy.get("tr>th").should("have.length", 4);
+
+    cy.get("[name='advancedtable_length']").should("have.value", "5");
+    cy.get("tbody>tr").should("have.length", 5);
+    cy.get("[name='advancedtable_length']").select("25");
+    cy.get("[name='advancedtable_length']").should("have.value", 25);
+    cy.get("tbody>tr").should("have.length", 25);
+
+    cy.get("[type='search']").type("london");
+    cy.get("tbody>tr").should("have.length", 16);
+    cy.get("tbody > tr > td:nth-child(2)").each(($td) => {
+      cy.wrap($td).should("contain.text", "London");
+    });
+
+    cy.get("[type='search']").clear();
+    cy.get("tbody>tr").should("have.length", 25);
+    cy.get("tbody > tr > td:nth-child(1)").each(($td, index) => {
+      cy.wrap($td).should("have.text", index + 1);
+    });
+    cy.get(".paginate_button.next").click();
+    cy.get("tbody > tr > td:nth-child(1)").each(($td, index) => {
+      cy.wrap($td).should("have.text", index + 26);
+    });
+  });
+
+  it.only("Verify Calendar  functionality", () => {
+    cy.get("[href='/calendar']").click();
+    const currentDate = new Date();
+    const monthNames = [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec",
+    ];
+
+    const month = monthNames[currentDate.getMonth()];
+    const day = currentDate.getDate();
+    const year = currentDate.getFullYear();
+
+    const formattedDate = `${month} ${day.toString().padStart(2, "0")} ${year}`;
+    console.log(formattedDate);
+
+    cy.get(".datepicker-days>div");
   });
 });
