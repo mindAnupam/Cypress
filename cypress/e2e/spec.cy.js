@@ -212,7 +212,7 @@ describe("Cypress Actions", () => {
     });
   });
 
-  it.only("Verify Calendar  functionality", () => {
+  it("Verify Calendar  functionality", () => {
     cy.get("[href='/calendar']").click();
     const currentDate = new Date();
     const monthNames = [
@@ -234,9 +234,63 @@ describe("Cypress Actions", () => {
     const day = currentDate.getDate();
     const year = currentDate.getFullYear();
 
-    const formattedDate = `${month} ${day.toString().padStart(2, "0")} ${year}`;
+    const formattedDate = `${month} ${(day + 3)
+      .toString()
+      .padStart(2, "0")} ${year}`;
     console.log(formattedDate);
 
-    cy.get(".datepicker-days>div");
+    // cy.get(".datepicker-days>div");
+    //Assert that start date is not selcted
+    // cy.get('button.is-active[type="button"]').should("not.exist");
+    // cy.get(`.datepicker-date[data-date*="${formattedDate}"] button.date-item`)
+    //   .first()
+    //   .click();
+    // cy.get(`.datepicker-date[data-date*="${formattedDate}"] button.date-item`)
+    //   .first()
+    //   .should("have.class", "is-active");
+
+    cy.get("input.is-datetimepicker-range").first().click();
+    cy.get(".datetimepicker-footer-today").last().click();
+    cy.get(`.datepicker-date[data-date*="${formattedDate}"] button.date-item`)
+      .last()
+      .click();
+    cy.get("p[_ngcontent-serverapp-c60]")
+      .first()
+      .should(
+        "contain",
+        day.toString().padStart(2, "0") + "-" + month + "-" + year
+      )
+      .should(
+        "contain",
+        (day + 3).toString().padStart(2, "0") + "-" + month + "-" + year
+      );
+
+    cy.get(".timepicker-hours .timepicker-next").dblclick();
+    cy.get(".timepicker-hours .timepicker-input-number").should(
+      "have.text",
+      "02"
+    );
+  });
+
+  it.only("Verify Upload  functionality", () => {
+    cy.get("[href='/file']").click();
+    cy.get('input[type="file"]').selectFile("cypress/fixtures/example.json", {
+      force: true,
+    });
+
+    const downloadFolder = Cypress.config("downloadsFolder");
+    console.log(downloadFolder);
+
+    // cy.task("emptyDownloadFolder", downloadFolder);
+
+    cy.get("#xls").click();
+    cy.get("#pdf").click();
+
+    cy.wait(5000);
+
+    cy.task("getFolderContents", downloadFolder).then((files) => {
+      expect(files.length).to.eq(2);
+      expect(files).to.include.members(["sample.xlsx", "sample.pdf"]);
+    });
   });
 });
