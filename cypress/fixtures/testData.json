@@ -1,0 +1,20 @@
+{
+    "edit": {
+      "fullName": "Bruce Wayne",
+      "joinText": " Batman",
+      "getMeValue": "ortonikc"
+    },
+    "button": {
+      "backgroundColor": "rgb(138, 77, 118)",
+      "buttonHeight": "40px"
+    },
+    "dropdown": {
+      "fruit": "Mango",
+      "superhero": "Batman",
+      "country": "India"
+    },
+    "alert": {
+      "alertText": "Hey! Welcome to LetCode",
+      "confirmText": "Are you happy with LetCode?"
+    }
+  }

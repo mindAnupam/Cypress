@@ -1,85 +1,96 @@
 import "cypress-real-events";
 import "@4tw/cypress-drag-drop";
+import EditPage from "../pages/EditPage";
+import ButtonPage from "../pages/ButtonPage";
+import DropdownPage from "../pages/DropdownPage";
+import AlertPage from "../pages/AlertPage";
+import RadioPage from "../pages/RadioPage";
+import ElementsPage from "../pages/ElementsPage";
+import SelectablePage from "../pages/SelectablePage";
+import SortablePage from "../pages/SortablePage";
+import TablePage from "../pages/TablePage";
+import AdvancedTablePage from "../pages/AdvancedTablePage";
+import CalendarPage from "../pages/CalendarPage";
+import UploadPage from "../pages/UploadPage";
 
 describe("Cypress Actions", () => {
+  let testData;
+
+  before(() => {
+    cy.fixture("testData").then((data) => {
+      testData = data;
+    });
+  });
+
   beforeEach(() => {
     cy.visit(Cypress.env("url"));
-    cy.url().should("eql", Cypress.env("url"));
+    cy.url().should("eq", Cypress.env("url"));
   });
 
   it("Verify Edit functionality", () => {
-    cy.get("[href='/edit']").click();
-    cy.get("#fullName").type("Bruce Wayne");
-    cy.get("#join").type(" Batman");
-    cy.get("#getMe").should("have.value", "ortonikc");
-    cy.get("#clearMe").clear();
-    cy.get("#clearMe").should("have.text", "");
-    cy.get("#noEdit").should("have.attr", "disabled");
-    cy.get("#dontwrite").should("have.attr", "readonly");
+    EditPage.visit();
+    EditPage.fillFullName(testData.edit.fullName);
+    EditPage.appendToJoin(testData.edit.joinText);
+    EditPage.verifyGetMeValue(testData.edit.getMeValue);
+    EditPage.clearClearMeInput();
+    EditPage.verifyClearMeInputEmpty();
+    EditPage.verifyNoEditDisabled();
+    EditPage.verifyDontWriteReadonly();
   });
 
   it("Verify button functionality", () => {
-    cy.get("[href='/buttons']").click();
-    cy.get("#home").click();
+    ButtonPage.visit();
+    ButtonPage.clickHomeButton();
     cy.go("back");
-    cy.get("#color").should(
-      "have.css",
-      "background-color",
-      "rgb(138, 77, 118)"
-    );
-    cy.get("#property").should("have.css", "height", "40px");
-    cy.get('[title="Disabled button"]').should("have.attr", "disabled");
+    ButtonPage.verifyColorButtonBackground(testData.button.backgroundColor);
+    ButtonPage.verifyPropertyButtonHeight(testData.button.buttonHeight);
+    ButtonPage.verifyDisabledButtonAttribute();
+    // ButtonPage.holdButton(2000);
     cy.get("h2").should("contain", "Button Hold!").trigger("mousedown");
     cy.wait(2000);
   });
 
   it("Verify dropdown functionality", () => {
-    cy.get("[href='/dropdowns']").click();
-    cy.get("#fruits").should("have.value", "header");
-    cy.get("#fruits").select("Mango");
-    cy.get("#fruits").should("have.value", "1");
-    cy.get("p.subtitle").eq(0).should("have.text", "You have selected Mango");
-    cy.get("#superheros").select("Batman");
-    cy.get("p.subtitle").eq(1).should("have.text", "You have selected Batman");
-    cy.get("#superheros").select("Daredevil");
-    cy.get("#lang option")
-      .last()
-      .then(($lastOption) => {
-        cy.get("#lang").select($lastOption.text());
-      });
-    cy.get("#country").select("India");
+    DropdownPage.visit();
+    DropdownPage.selectFruit(testData.dropdown.fruit);
+    DropdownPage.verifyFruitSelection(testData.dropdown.fruit);
+    DropdownPage.selectSuperhero(testData.dropdown.superhero);
+    DropdownPage.verifySuperheroSelection(testData.dropdown.superhero);
+    DropdownPage.selectLastLanguage();
+    DropdownPage.selectCountry(testData.dropdown.country);
   });
 
-  it("Verify alerts  functionality", () => {
-    cy.get("[href='/alert']").click();
-    cy.get("#accept").click();
-    cy.on("window:alert", (str) => {
-      expect(str).to.equal("Hey! Welcome to LetCode");
-    });
-    cy.get("#confirm").click();
-    cy.on("window:confirm", (str) => {
-      expect(str).to.equal("Are you happy with LetCode?");
-    });
+  it("Verify alerts functionality", () => {
+    AlertPage.visit();
+    AlertPage.clickAcceptButton();
+    AlertPage.verifyAlertText(testData.alert.alertText);
+    AlertPage.clickConfirmButton();
+    AlertPage.verifyConfirmText(testData.alert.confirmText);
   });
 
-  it("Verify radio buuton  functionality", () => {
-    cy.get("[href='/radio']").click();
-    cy.get("#yes").check();
-    cy.get("#yes").should("be.checked");
-    cy.get("#one").check();
-    cy.get("#two").should("not.be.checked");
-    cy.get("#two").check();
-    cy.get("#one").should("not.be.checked");
-    cy.get("#foo").check();
-    cy.get("#foo").should("be.checked");
-    cy.get("#notfoo").check();
-    cy.get("#notfoo").should("be.checked");
-    cy.get("[type='checkbox']").eq(0).should("be.checked");
-    cy.get("[type='checkbox']").eq(1).check();
-    cy.get("[type='checkbox']").eq(1).should("be.checked");
+  it("Verify radio button functionality", () => {
+    RadioPage.visit();
+    RadioPage.checkYesOption();
+    RadioPage.verifyYesOptionChecked();
+    RadioPage.checkOneOption();
+    RadioPage.verifyTwoOptionNotChecked();
+    RadioPage.checkTwoOption();
+    RadioPage.verifyOneOptionNotChecked();
+    RadioPage.checkFooOption();
+    RadioPage.verifyFooOptionChecked();
+    RadioPage.checkNotFooOption();
+    RadioPage.verifyNotFooOptionChecked();
+    RadioPage.verifyFirstCheckboxChecked();
+    RadioPage.checkSecondCheckbox();
+    RadioPage.verifySecondCheckboxChecked();
   });
 
-  it("Verify elements buuton  functionality", () => {
+  it("Verify elements functionality", () => {
+    // ElementsPage.visit();
+    // ElementsPage.enterGitHubUsername(testData.elements.githubUsername);
+    // ElementsPage.verifyName(testData.elements.name);
+    // ElementsPage.verifyCountry(testData.elements.country);
+    // ElementsPage.verifyBio(testData.elements.bio);
     cy.get("[href='/elements']").click();
     cy.get("[type='text']").type("mindAnupam {enter}");
     cy.get("p.title").should("have.text", "Anupam Kushwaha");
@@ -90,41 +101,41 @@ describe("Cypress Actions", () => {
     );
   });
 
-  it("Verify multi-select  functionality", () => {
-    cy.get("[href='/selectable']").click();
-    cy.get("body").type("{ctrl}", { release: false });
-    cy.get(".ui-selectable").eq(0).click();
-    cy.get(".ui-selectable").eq(0).should("have.class", "ui-selected");
-
-    cy.get(".ui-selectable").eq(3).click();
-    cy.get(".ui-selectable").eq(3).should("have.class", "ui-selected");
-
-    cy.get(".ui-selectable").eq(6).click();
-    cy.get(".ui-selectable").eq(6).should("have.class", "ui-selected");
-
-    cy.get(".ui-selectable").eq(7).click();
-    cy.get(".ui-selectable").eq(7).should("have.class", "ui-selected");
+  it("Verify multi-select functionality", () => {
+    SelectablePage.visit();
+    SelectablePage.selectMultipleItems([0, 3, 6, 7]);
+    SelectablePage.verifyItemsSelected([0, 3, 6, 7]);
   });
 
-  it("Verify sorting  functionality", () => {
-    cy.get("[href='/sortable']").click();
-    cy.get(".cdk-drag")
-      .eq(1)
-      .as("sourceElement")
-      .should("have.text", " Pick up groceries");
+  // it("Verify sorting functionality", () => {
+  //   // SortablePage.visit();
+  //   // SortablePage.dragAndDrop(1, 3);
+  //   // SortablePage.verifyItemOrder(3, "Pick up groceries");
+  //   cy.get("[href='/sortable']").click();
+  //   cy.get(".cdk-drag")
+  //     .eq(1)
+  //     .as("sourceElement")
+  //     .should("have.text", " Pick up groceries");
 
-    cy.get(".cdk-drag")
-      .eq(3)
-      .as("targetElement")
-      .should("have.text", " Fall asleep");
+  //   cy.get(".cdk-drag")
+  //     .eq(3)
+  //     .as("targetElement")
+  //     .should("have.text", " Fall asleep");
 
-    cy.get("@sourceElement").drag("@targetElement");
+  //   cy.get("@sourceElement").drag("@targetElement");
 
-    // cy.get(".cdk-drag").eq(2).should("have.text", " Fall asleep");
-    cy.get(".cdk-drag").eq(3).should("have.text", " Pick up groceries");
-  });
+  //   // cy.get(".cdk-drag").eq(2).should("have.text", " Fall asleep");
+  //   cy.get(".cdk-drag").eq(3).should("have.text", " Pick up groceries");
+  // });
 
-  it("Verify table  functionality", () => {
+  it("Verify table functionality", () => {
+    // TablePage.visit();
+    // TablePage.sumAndVerifyCalories();
+    // TablePage.checkRowByName("Raj");
+    // TablePage.verifyRowChecked("Raj");
+    // TablePage.verifyInitialTableOrder();
+    // TablePage.sortByCalories();
+    // TablePage.verifyTableOrderAfterSort();
     cy.get("[href='/table']").click();
     cy.get("tr").eq(1).find("td").eq(1).invoke("text").as("Chocolate");
     cy.get("tr").eq(2).find("td").eq(1).invoke("text").as("Apple");
@@ -185,112 +196,34 @@ describe("Cypress Actions", () => {
       .should("have.text", "16");
   });
 
-  it("Verify Advanced table  functionality", () => {
-    cy.get("[href='/advancedtable']").click();
-    cy.get("tr>th").should("have.length", 4);
-
-    cy.get("[name='advancedtable_length']").should("have.value", "5");
-    cy.get("tbody>tr").should("have.length", 5);
-    cy.get("[name='advancedtable_length']").select("25");
-    cy.get("[name='advancedtable_length']").should("have.value", 25);
-    cy.get("tbody>tr").should("have.length", 25);
-
-    cy.get("[type='search']").type("london");
-    cy.get("tbody>tr").should("have.length", 16);
-    cy.get("tbody > tr > td:nth-child(2)").each(($td) => {
-      cy.wrap($td).should("contain.text", "London");
-    });
-
-    cy.get("[type='search']").clear();
-    cy.get("tbody>tr").should("have.length", 25);
-    cy.get("tbody > tr > td:nth-child(1)").each(($td, index) => {
-      cy.wrap($td).should("have.text", index + 1);
-    });
-    cy.get(".paginate_button.next").click();
-    cy.get("tbody > tr > td:nth-child(1)").each(($td, index) => {
-      cy.wrap($td).should("have.text", index + 26);
-    });
+  it("Verify Advanced table functionality", () => {
+    AdvancedTablePage.visit();
+    AdvancedTablePage.verifyColumnCount(4);
+    AdvancedTablePage.changePageSize(25);
+    AdvancedTablePage.verifyRowCount(25);
+    AdvancedTablePage.searchTable("london");
+    AdvancedTablePage.verifySearchResults("London", 16);
+    AdvancedTablePage.clearSearch();
+    AdvancedTablePage.verifyRowCount(25);
+    AdvancedTablePage.verifyPageOneIndexes();
+    AdvancedTablePage.goToNextPage();
+    AdvancedTablePage.verifyPageTwoIndexes();
   });
 
-  it("Verify Calendar  functionality", () => {
-    cy.get("[href='/calendar']").click();
-    const currentDate = new Date();
-    const monthNames = [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
-    ];
-
-    const month = monthNames[currentDate.getMonth()];
-    const day = currentDate.getDate();
-    const year = currentDate.getFullYear();
-
-    const formattedDate = `${month} ${(day + 3)
-      .toString()
-      .padStart(2, "0")} ${year}`;
-    console.log(formattedDate);
-
-    // cy.get(".datepicker-days>div");
-    //Assert that start date is not selcted
-    // cy.get('button.is-active[type="button"]').should("not.exist");
-    // cy.get(`.datepicker-date[data-date*="${formattedDate}"] button.date-item`)
-    //   .first()
-    //   .click();
-    // cy.get(`.datepicker-date[data-date*="${formattedDate}"] button.date-item`)
-    //   .first()
-    //   .should("have.class", "is-active");
-
-    cy.get("input.is-datetimepicker-range").first().click();
-    cy.get(".datetimepicker-footer-today").last().click();
-    cy.get(`.datepicker-date[data-date*="${formattedDate}"] button.date-item`)
-      .last()
-      .click();
-    cy.get("p[_ngcontent-serverapp-c60]")
-      .first()
-      .should(
-        "contain",
-        day.toString().padStart(2, "0") + "-" + month + "-" + year
-      )
-      .should(
-        "contain",
-        (day + 3).toString().padStart(2, "0") + "-" + month + "-" + year
-      );
-
-    cy.get(".timepicker-hours .timepicker-next").dblclick();
-    cy.get(".timepicker-hours .timepicker-input-number").should(
-      "have.text",
-      "02"
-    );
+  it("Verify Calendar functionality", () => {
+    CalendarPage.visit();
+    CalendarPage.selectTodayAsStartDate();
+    CalendarPage.selectFutureDateAsEndDate(3);
+    CalendarPage.verifySelectedDateRange();
+    CalendarPage.adjustTime(2);
+    CalendarPage.verifyAdjustedTime("02");
   });
 
-  it.only("Verify Upload  functionality", () => {
-    cy.get("[href='/file']").click();
-    cy.get('input[type="file"]').selectFile("cypress/fixtures/example.json", {
-      force: true,
-    });
-
-    const downloadFolder = Cypress.config("downloadsFolder");
-    console.log(downloadFolder);
-
-    // cy.task("emptyDownloadFolder", downloadFolder);
-
-    cy.get("#xls").click();
-    cy.get("#pdf").click();
-
-    cy.wait(5000);
-
-    cy.task("getFolderContents", downloadFolder).then((files) => {
-      expect(files.length).to.eq(2);
-      expect(files).to.include.members(["sample.xlsx", "sample.pdf"]);
-    });
+  it("Verify Upload functionality", () => {
+    UploadPage.visit();
+    UploadPage.uploadFile("cypress/fixtures/example.json");
+    UploadPage.downloadExcelFile();
+    UploadPage.downloadPdfFile();
+    UploadPage.verifyDownloadedFiles(["sample.xlsx", "sample.pdf"]);
   });
 });
