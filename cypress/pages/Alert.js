@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class AlertPage extends BasePage {
+class Alert extends Base {
   constructor() {
     super();
     this.url = "/alert";
@@ -33,4 +33,4 @@ class AlertPage extends BasePage {
   }
 }
 
-export default new AlertPage();
+export default new Alert();

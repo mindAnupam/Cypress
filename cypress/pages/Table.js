@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class TablePage extends BasePage {
+class Table extends Base {
   constructor() {
     super();
     this.url = "/table";
@@ -83,4 +83,4 @@ class TablePage extends BasePage {
   }
 }
 
-export default new TablePage();
+export default new Table();

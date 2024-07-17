@@ -1,4 +1,4 @@
-class BasePage {
+class Base {
   visit(path) {
     cy.visit("https://letcode.in/" + path);
   }
@@ -32,4 +32,4 @@ class BasePage {
   }
 }
 
-export default BasePage;
+export default Base;

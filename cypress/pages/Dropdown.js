@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class DropdownPage extends BasePage {
+class Dropdown extends Base {
   constructor() {
     super();
     this.url = "/dropdowns";
@@ -51,4 +51,4 @@ class DropdownPage extends BasePage {
   }
 }
 
-export default new DropdownPage();
+export default new Dropdown();

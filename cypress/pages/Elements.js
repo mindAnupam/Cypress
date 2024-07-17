@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class ElementsPage extends BasePage {
+class Elements extends Base {
   constructor() {
     super();
     this.url = "/elements";
@@ -31,4 +31,4 @@ class ElementsPage extends BasePage {
   }
 }
 
-export default new ElementsPage();
+export default new Elements();

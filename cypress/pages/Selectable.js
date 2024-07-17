@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class SelectablePage extends BasePage {
+class Selectable extends Base {
   constructor() {
     super();
     this.url = "/selectable";
@@ -28,4 +28,4 @@ class SelectablePage extends BasePage {
   }
 }
 
-export default new SelectablePage();
+export default new Selectable();

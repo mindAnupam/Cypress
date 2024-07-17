@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class RadioPage extends BasePage {
+class Radio extends Base {
   constructor() {
     super();
     this.url = "/radio";
@@ -70,4 +70,4 @@ class RadioPage extends BasePage {
   }
 }
 
-export default new RadioPage();
+export default new Radio();

@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class EditPage extends BasePage {
+class Edit extends Base {
   constructor() {
     super();
     this.url = "/edit";
@@ -45,4 +45,4 @@ class EditPage extends BasePage {
   }
 }
 
-export default new EditPage();
+export default new Edit();

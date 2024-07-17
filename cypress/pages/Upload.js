@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class UploadPage extends BasePage {
+class Upload extends Base {
   constructor() {
     super();
     this.url = "/file";
@@ -37,4 +37,4 @@ class UploadPage extends BasePage {
   }
 }
 
-export default new UploadPage();
+export default new Upload();

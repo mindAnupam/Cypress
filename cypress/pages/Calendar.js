@@ -1,6 +1,6 @@
-import BasePage from "./BasePage";
+import Base from "./Base";
 
-class CalendarPage extends BasePage {
+class Calendar extends Base {
   constructor() {
     super();
     this.url = "/calendar";
@@ -102,4 +102,4 @@ class CalendarPage extends BasePage {
   }
 }
 
-export default new CalendarPage();
+export default new Calendar();
