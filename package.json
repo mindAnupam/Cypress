@@ -4,6 +4,7 @@
     "cypress-real-events": "^1.13.0"
   },
   "devDependencies": {
-    "@4tw/cypress-drag-drop": "^2.2.5"
+    "@4tw/cypress-drag-drop": "^2.2.5",
+    "cypress-iframe": "^1.0.1"
   }
 }

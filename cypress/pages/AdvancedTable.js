@@ -10,6 +10,10 @@ class AdvancedTable extends Base {
     this.nextButton = ".paginate_button.next";
   }
 
+  visit() {
+    super.visit(this.url);
+  }
+
   verifyColumnCount(expectedCount) {
     cy.get("tr>th").should("have.length", expectedCount);
   }

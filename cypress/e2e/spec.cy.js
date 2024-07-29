@@ -1,5 +1,7 @@
 import "cypress-real-events";
 import "@4tw/cypress-drag-drop";
+import "cypress-iframe";
+
 import Edit from "../pages/Edit";
 import Button from "../pages/Button";
 import Dropdown from "../pages/Dropdown";
@@ -11,6 +13,8 @@ import Table from "../pages/Table";
 import AdvancedTable from "../pages/AdvancedTable";
 import Calendar from "../pages/Calendar";
 import Upload from "../pages/Upload";
+import Frame from "../pages/Frame";
+import { form } from "../pages/Form";
 
 describe("Cypress Actions", () => {
   let testData;
@@ -104,21 +108,6 @@ describe("Cypress Actions", () => {
     Selectable.visit();
     Selectable.selectMultipleItems([0, 3, 6, 7]);
     Selectable.verifyItemsSelected([0, 3, 6, 7]);
-  });
-
-  it.skip("Verify sorting functionality", () => {
-    cy.get("[href='/sortable']").click();
-
-    cy.get("#cdk-drop-list-0").children().should("have.length", "4");
-    cy.get("#cdk-drop-list-1").children().should("have.length", "5");
-
-    cy.get("#cdk-drop-list-0").children().first().as("sourceElement");
-    cy.get("#cdk-drop-list-1").children().first().as("targetElement");
-
-    cy.dragAndDrop(
-      "#cdk-drop-list-0 > :first-child",
-      "#cdk-drop-list-1 > :last-child"
-    );
   });
 
   it("Verify table functionality", () => {
@@ -218,5 +207,71 @@ describe("Cypress Actions", () => {
     Upload.downloadExcelFile();
     Upload.downloadPdfFile();
     Upload.verifyDownloadedFiles(["sample.xlsx", "sample.pdf"]);
+  });
+
+  it("Verify Frame functionality", () => {
+    Frame.visit();
+    Frame.typeFirstName("John");
+    Frame.typeLastName("Doe");
+    Frame.verifyConfirmationText("John", "Doe");
+    Frame.typeEmail("john.doe@example.com");
+  });
+
+  it.skip("Verify shadow functionality", () => {
+    cy.visit("https://letcode.in/shadow");
+
+    // Open shadow DOM
+    cy.get("#open-shadow").shadow().find("#fname").type("Jane");
+
+    const interactWithShadowDom = (
+      rootSelector,
+      innerSelector,
+      action,
+      value
+    ) => {
+      cy.window().then((win) => {
+        const element = win.document
+          .querySelector(rootSelector)
+          .shadowRoot.querySelector(innerSelector);
+        if (element) {
+          if (action === "type") {
+            element.value = value;
+            element.dispatchEvent(new Event("input"));
+          } else if (action === "click") {
+            element.click();
+          }
+        } else {
+          throw new Error(
+            `Element ${innerSelector} not found in shadow DOM of ${rootSelector}`
+          );
+        }
+      });
+    };
+
+    // Interact with open shadow DOM
+    interactWithShadowDom("#open-shadow", "#fname", "type", "John");
+    interactWithShadowDom(
+      "my-web-component",
+      "#email",
+      "type",
+      "test@example.com"
+    );
+  });
+
+  it("Test Form scenarios", () => {
+    form.visit();
+    form.fillForm({
+      firstName: "Bruce",
+      lastName: "Wayne",
+      email: "bruce.wayne@waynenterprises.com",
+      countryCode: "91",
+      phone: "1234567890",
+      address1: "123 Main St",
+      address2: "Apt 4B",
+      state: "Delhi",
+      postalCode: "271865",
+      country: "India",
+      dob: "1998-07-20",
+    });
   });
 });
